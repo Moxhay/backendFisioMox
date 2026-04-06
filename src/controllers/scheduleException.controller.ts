@@ -7,6 +7,15 @@ import { formatTimeFromDate, isTimeWithinRange } from '../utils/time';
 import { getDayBoundaries } from '../utils/dateRanges';
 import { processRefundInTransaction } from '../utils/refund';
 
+type PrismaTransactionClient = Parameters<Parameters<typeof prisma.$transaction>[0]>[0];
+
+interface AppointmentWithPaymentAndPatient {
+  id: string;
+  dateTime: Date;
+  patient: { id: string; name: string; email: string };
+  payment: { id: string; stripePaymentIntentId: string; status: string } | null;
+}
+
 export async function getScheduleExceptions(req: Request, res: Response, next: NextFunction) {
   try {
     const physioId = req.user!.id;
@@ -55,13 +64,13 @@ export async function createScheduleException(req: Request, res: Response, next:
     });
 
     const conflictingAppointments = confirmedAppointments.filter(
-      (apt) => !isAppointmentCoveredByException(apt.dateTime, isWorkingDay, startTime, endTime)
+      (apt: AppointmentWithPaymentAndPatient) => !isAppointmentCoveredByException(apt.dateTime, isWorkingDay, startTime, endTime)
     );
 
     if (conflictingAppointments.length > 0 && !confirmCancellation) {
       res.status(HTTP_STATUS.CONFLICT).json(
         error(SCHEDULE_EXCEPTION_ERRORS.APPOINTMENTS_CONFLICT, HTTP_STATUS.CONFLICT, {
-          conflictingAppointments: conflictingAppointments.map((apt) => ({
+          conflictingAppointments: conflictingAppointments.map((apt: AppointmentWithPaymentAndPatient) => ({
             id: apt.id,
             dateTime: apt.dateTime,
             patient: apt.patient,
@@ -71,7 +80,7 @@ export async function createScheduleException(req: Request, res: Response, next:
       return;
     }
 
-    const exception = await prisma.$transaction(async (tx) => {
+    const exception = await prisma.$transaction(async (tx: PrismaTransactionClient) => {
       for (const apt of conflictingAppointments) {
         await tx.appointment.update({
           where: { id: apt.id },
@@ -95,7 +104,7 @@ export async function createScheduleException(req: Request, res: Response, next:
     res.status(HTTP_STATUS.CREATED).json(
       success({
         exception,
-        cancelledAppointments: conflictingAppointments.map((apt) => apt.id),
+        cancelledAppointments: conflictingAppointments.map((apt: AppointmentWithPaymentAndPatient) => apt.id),
       })
     );
   } catch (err) {

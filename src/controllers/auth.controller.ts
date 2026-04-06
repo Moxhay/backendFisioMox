@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
-import { User } from '../generated/prisma/client';
+import type { User, Prisma } from '../generated/prisma/client';
 import { hashPassword } from '../utils/password';
 import { generateToken, getTokenExpiry } from '../utils/token';
 import { success } from '../utils/response';
@@ -18,6 +18,8 @@ interface WorkScheduleInput {
   startTime: string;
   endTime: string;
 }
+
+type PrismaTransactionClient = Parameters<Parameters<typeof prisma.$transaction>[0]>[0];
 
 async function createSessionWithCookie(res: Response, userId: string) {
   const token = generateToken();
@@ -59,7 +61,7 @@ export async function registerPhysio(req: Request, res: Response, next: NextFunc
   try {
     const { email, password, name, pricePerSession, workSchedules } = req.body;
 
-    const user = await prisma.$transaction(async (tx) => {
+    const user = await prisma.$transaction(async (tx: PrismaTransactionClient) => {
       const newUser = await tx.user.create({
         data: {
           email,

@@ -6,6 +6,15 @@ import { HTTP_STATUS, WORK_SCHEDULE_ERRORS } from '../constants/errors';
 import { SLOT_DURATION_MINUTES } from '../constants/appointments';
 import { processRefundInTransaction } from '../utils/refund';
 
+type PrismaTransactionClient = Parameters<Parameters<typeof prisma.$transaction>[0]>[0];
+
+interface AppointmentWithPaymentAndPatient {
+  id: string;
+  dateTime: Date;
+  patient: { id: string; name: string; email: string };
+  payment: { id: string; stripePaymentIntentId: string; status: string } | null;
+}
+
 interface WorkScheduleInput {
   dayOfWeek: number;
   startTime: string;
@@ -47,13 +56,13 @@ export async function setWorkSchedule(req: Request, res: Response, next: NextFun
     });
 
     const conflictingAppointments = confirmedAppointments.filter(
-      (apt) => !isAppointmentCoveredBySchedules(apt.dateTime, schedules)
+      (apt: AppointmentWithPaymentAndPatient) => !isAppointmentCoveredBySchedules(apt.dateTime, schedules)
     );
 
     if (conflictingAppointments.length > 0 && !confirmCancellation) {
       res.status(HTTP_STATUS.CONFLICT).json(
         error(WORK_SCHEDULE_ERRORS.APPOINTMENTS_CONFLICT, HTTP_STATUS.CONFLICT, {
-          conflictingAppointments: conflictingAppointments.map((apt) => ({
+          conflictingAppointments: conflictingAppointments.map((apt: AppointmentWithPaymentAndPatient) => ({
             id: apt.id,
             dateTime: apt.dateTime,
             patient: apt.patient,
@@ -63,7 +72,7 @@ export async function setWorkSchedule(req: Request, res: Response, next: NextFun
       return;
     }
 
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: PrismaTransactionClient) => {
       for (const apt of conflictingAppointments) {
         await tx.appointment.update({
           where: { id: apt.id },
@@ -95,7 +104,7 @@ export async function setWorkSchedule(req: Request, res: Response, next: NextFun
     res.json(
       success({
         schedules: updated,
-        cancelledAppointments: conflictingAppointments.map((apt) => apt.id),
+        cancelledAppointments: conflictingAppointments.map((apt: AppointmentWithPaymentAndPatient) => apt.id),
       })
     );
   } catch (err) {

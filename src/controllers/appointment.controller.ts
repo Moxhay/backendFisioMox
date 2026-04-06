@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
+import type { WorkSchedule, ScheduleException, Appointment } from '../generated/prisma/client';
 import { createPaymentIntent, isPaymentSucceeded, requiresAction } from '../lib/stripe';
 import { generateTimeSlots } from '../utils/time';
 import { success, error } from '../utils/response';
@@ -46,24 +47,24 @@ export async function getWeekSlots(req: Request, res: Response, next: NextFuncti
     ]);
 
     const scheduleByDay = workSchedules.reduce(
-      (acc, ws) => {
+      (acc: Record<number, WorkSchedule>, ws: WorkSchedule) => {
         acc[ws.dayOfWeek] = ws;
         return acc;
       },
-      {} as Record<number, (typeof workSchedules)[0]>
+      {} as Record<number, WorkSchedule>
     );
 
     const exceptionByDate = exceptions.reduce(
-      (acc, ex) => {
+      (acc: Record<string, ScheduleException>, ex: ScheduleException) => {
         const dateStr = ex.date.toISOString().split('T')[0];
         acc[dateStr] = ex;
         return acc;
       },
-      {} as Record<string, (typeof exceptions)[0]>
+      {} as Record<string, ScheduleException>
     );
 
     const bookedByDate = bookedAppointments.reduce(
-      (acc, apt) => {
+      (acc: Record<string, Set<number>>, apt: Appointment) => {
         const dateStr = apt.dateTime.toISOString().split('T')[0];
         if (!acc[dateStr]) acc[dateStr] = new Set<number>();
         acc[dateStr].add(apt.dateTime.getTime());

@@ -1,0 +1,2 @@
+export const SLOT_DURATION_MINUTES = 60;
+export const RESERVATION_EXPIRY_MINUTES = 10;

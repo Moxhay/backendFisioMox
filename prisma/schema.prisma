@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  PHYSIO
+  PATIENT
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  password     String
+  name         String
+  role         Role
+  pricePerSession Int?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  sessions              Session[]
+  workSchedules         WorkSchedule[]
+  scheduleExceptions    ScheduleException[]
+  appointmentsAsPhysio  Appointment[]       @relation("PhysioAppointments")
+  appointmentsAsPatient Appointment[]       @relation("PatientAppointments")
+  cancelledAppointments Appointment[]       @relation("CancelledByUser")
+
+  @@index([role])
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+model WorkSchedule {
+  id        String @id @default(cuid())
+  physioId  String
+  dayOfWeek Int
+  startTime String
+  endTime   String
+  physio    User   @relation(fields: [physioId], references: [id], onDelete: Cascade)
+
+  @@index([physioId])
+  @@map("work_schedules")
+}
+
+model ScheduleException {
+  id           String   @id @default(cuid())
+  physioId     String
+  date         DateTime @db.Date
+  isWorkingDay Boolean
+  startTime    String?
+  endTime      String?
+
+  physio User @relation(fields: [physioId], references: [id], onDelete: Cascade)
+
+  @@index([physioId])
+  @@index([physioId, date])
+  @@map("schedule_exceptions")
+}
+
+model Appointment {
+  id            String            @id @default(cuid())
+  physioId      String
+  patientId     String
+  dateTime      DateTime
+  duration      Int               @default(60)
+  notes         String?
+  status        AppointmentStatus @default(PENDING)
+  expiresAt     DateTime?
+  cancelledById String?
+  createdAt     DateTime          @default(now())
+
+  physio      User     @relation("PhysioAppointments", fields: [physioId], references: [id])
+  patient     User     @relation("PatientAppointments", fields: [patientId], references: [id])
+  cancelledBy User?    @relation("CancelledByUser", fields: [cancelledById], references: [id])
+  payment     Payment?
+
+  @@index([physioId])
+  @@index([patientId])
+  @@index([dateTime])
+  @@index([physioId, dateTime])
+  @@index([status])
+  @@index([expiresAt])
+  @@map("appointments")
+}
+
+model Payment {
+  id                    String        @id @default(cuid())
+  appointmentId         String        @unique
+  stripePaymentIntentId String        @unique
+  amount                Int
+  status                PaymentStatus @default(PENDING)
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  appointment Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@map("payments")
+}

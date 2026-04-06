@@ -1,0 +1,150 @@
+@baseUrl = http://localhost:3001/api/v1
+
+### ==================== AUTH ====================
+
+### Register Patient
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "patient@test.com",
+  "password": "password123",
+  "name": "Test Patient"
+}
+
+### Register Physio
+POST {{baseUrl}}/auth/register/physio
+Content-Type: application/json
+
+{
+  "email": "physio@test.com",
+  "password": "password123",
+  "name": "Test Physio",
+  "pricePerSession": 5000,
+  "workSchedules": [
+    { "dayOfWeek": 1, "startTime": "09:00", "endTime": "17:00" },
+    { "dayOfWeek": 2, "startTime": "09:00", "endTime": "17:00" },
+    { "dayOfWeek": 3, "startTime": "09:00", "endTime": "17:00" }
+  ]
+}
+
+### Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "patient@test.com",
+  "password": "password123"
+}
+
+### Login - Wrong Password (Error)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "patient@test.com",
+  "password": "wrongpassword"
+}
+
+### Get Current User (needs cookie)
+GET {{baseUrl}}/auth/me
+
+### Get Current User - No Auth (Error)
+GET {{baseUrl}}/auth/me
+
+### Logout (needs cookie)
+POST {{baseUrl}}/auth/logout
+
+### ==================== PHYSIOS ====================
+
+### Get All Physios
+GET {{baseUrl}}/physios
+
+### Get Physio by ID
+GET {{baseUrl}}/physios/{{physioId}}
+
+### Get Physio - Not Found (Error)
+GET {{baseUrl}}/physios/00000000-0000-0000-0000-000000000000
+
+### ==================== APPOINTMENTS ====================
+
+### Get Available Slots (needs cookie)
+GET {{baseUrl}}/appointments/slots?physioId=cmmgl1fah00003kiogq1duzt3&date=2025-01-20
+
+### Book Appointment (needs patient cookie)
+POST {{baseUrl}}/appointments
+Content-Type: application/json
+
+{
+  "physioId": "cmmgl1fah00003kiogq1duzt3",
+  "dateTime": "2025-01-20T10:00:00",
+  "notes": "First appointment"
+}
+
+### Get My Appointments (needs cookie)
+GET {{baseUrl}}/appointments
+
+### Get Appointment by ID (needs cookie)
+GET {{baseUrl}}/appointments/{{appointmentId}}
+
+### Cancel Appointment (needs cookie)
+PATCH {{baseUrl}}/appointments/{{appointmentId}}/cancel
+
+### ==================== WORK SCHEDULES ====================
+
+### Get My Work Schedule (needs physio cookie)
+GET {{baseUrl}}/work-schedules
+
+### Set Work Schedule (needs physio cookie)
+PUT {{baseUrl}}/work-schedules
+Content-Type: application/json
+
+[
+  { "dayOfWeek": 1, "startTime": "09:00", "endTime": "17:00" },
+  { "dayOfWeek": 2, "startTime": "09:00", "endTime": "17:00" }
+]
+
+### ==================== SCHEDULE EXCEPTIONS ====================
+
+### Get My Schedule Exceptions (needs physio cookie)
+GET {{baseUrl}}/schedule-exceptions
+
+### Create Schedule Exception (needs physio cookie)
+POST {{baseUrl}}/schedule-exceptions
+Content-Type: application/json
+
+{
+  "date": "2025-01-25",
+  "isWorkingDay": false
+}
+
+### Delete Schedule Exception (needs physio cookie)
+DELETE {{baseUrl}}/schedule-exceptions/{{exceptionId}}
+
+### ==================== PAYMENTS ====================
+
+### Get Payments (needs cookie)
+GET {{baseUrl}}/payments
+
+### Refund Payment (needs admin cookie)
+POST {{baseUrl}}/payments/{{paymentId}}/refund
+
+### ==================== VALIDATION ERRORS ====================
+
+### Register - Missing Fields (Validation Error)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "invalid-email"
+}
+
+### Register - Short Password (Validation Error)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "123",
+  "name": "Test"
+}

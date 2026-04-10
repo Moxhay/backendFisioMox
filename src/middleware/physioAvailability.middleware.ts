@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
-import { HTTP_STATUS, PHYSIO_ERRORS, APPOINTMENT_ERRORS } from '../constants/errors';
+import { PHYSIO_ERRORS, APPOINTMENT_ERRORS } from '../constants/errors';
 import { error } from '../utils/response';
 
 export async function validatePhysioExists(req: Request, res: Response, next: NextFunction) {
@@ -13,7 +13,7 @@ export async function validatePhysioExists(req: Request, res: Response, next: Ne
     });
 
     if (!physio) {
-      res.status(HTTP_STATUS.NOT_FOUND).json(error(PHYSIO_ERRORS.NOT_FOUND, HTTP_STATUS.NOT_FOUND));
+      res.status(PHYSIO_ERRORS.NOT_FOUND.status).json(error(PHYSIO_ERRORS.NOT_FOUND));
       return;
     }
 
@@ -29,7 +29,7 @@ export async function validatePhysioAvailability(req: Request, res: Response, ne
     const date = req.query.date as string || req.body.dateTime?.split('T')[0];
 
     if (!physioId || !date) {
-      res.status(HTTP_STATUS.BAD_REQUEST).json(error(PHYSIO_ERRORS.ID_AND_DATE_REQUIRED, HTTP_STATUS.BAD_REQUEST));
+      res.status(PHYSIO_ERRORS.ID_AND_DATE_REQUIRED.status).json(error(PHYSIO_ERRORS.ID_AND_DATE_REQUIRED));
       return;
     }
 
@@ -39,7 +39,7 @@ export async function validatePhysioAvailability(req: Request, res: Response, ne
     });
 
     if (!physio) {
-      res.status(HTTP_STATUS.NOT_FOUND).json(error(PHYSIO_ERRORS.NOT_FOUND, HTTP_STATUS.NOT_FOUND));
+      res.status(PHYSIO_ERRORS.NOT_FOUND.status).json(error(PHYSIO_ERRORS.NOT_FOUND));
       return;
     }
 
@@ -50,7 +50,7 @@ export async function validatePhysioAvailability(req: Request, res: Response, ne
     });
 
     if (!workSchedule) {
-      res.status(HTTP_STATUS.NOT_FOUND).json(error(PHYSIO_ERRORS.DOES_NOT_WORK_THIS_DAY, HTTP_STATUS.NOT_FOUND));
+      res.status(PHYSIO_ERRORS.DOES_NOT_WORK_THIS_DAY.status).json(error(PHYSIO_ERRORS.DOES_NOT_WORK_THIS_DAY));
       return;
     }
 
@@ -59,7 +59,7 @@ export async function validatePhysioAvailability(req: Request, res: Response, ne
     });
 
     if (exception && !exception.isWorkingDay) {
-      res.status(HTTP_STATUS.UNPROCESSABLE_ENTITY).json(error(PHYSIO_ERRORS.DAY_OFF, HTTP_STATUS.UNPROCESSABLE_ENTITY));
+      res.status(PHYSIO_ERRORS.DAY_OFF.status).json(error(PHYSIO_ERRORS.DAY_OFF));
       return;
     }
 
@@ -81,7 +81,7 @@ export async function validateSlotAvailable(req: Request, res: Response, next: N
     const { physio } = req.physioSchedule!;
 
     if (!physio.pricePerSession) {
-      res.status(HTTP_STATUS.BAD_REQUEST).json(error(PHYSIO_ERRORS.NO_PRICE_CONFIGURED, HTTP_STATUS.BAD_REQUEST));
+      res.status(PHYSIO_ERRORS.NO_PRICE_CONFIGURED.status).json(error(PHYSIO_ERRORS.NO_PRICE_CONFIGURED));
       return;
     }
 
@@ -97,7 +97,7 @@ export async function validateSlotAvailable(req: Request, res: Response, next: N
     });
 
     if (existingAppointment) {
-      res.status(HTTP_STATUS.CONFLICT).json(error(APPOINTMENT_ERRORS.SLOT_ALREADY_BOOKED, HTTP_STATUS.CONFLICT));
+      res.status(APPOINTMENT_ERRORS.SLOT_ALREADY_BOOKED.status).json(error(APPOINTMENT_ERRORS.SLOT_ALREADY_BOOKED));
       return;
     }
 

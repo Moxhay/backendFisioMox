@@ -30,7 +30,7 @@ describe('Webhook Errors', () => {
         .send(JSON.stringify({ type: 'payment_intent.succeeded' }));
 
       expect(res.status).toBe(HTTP_STATUS.BAD_REQUEST);
-      expect(res.body.error.message).toBe(WEBHOOK_ERRORS.MISSING_STRIPE_SIGNATURE);
+      expect(res.body.error.message).toBe(WEBHOOK_ERRORS.MISSING_STRIPE_SIGNATURE.message);
     });
 
     it('should fail with invalid signature', async () => {
@@ -45,7 +45,7 @@ describe('Webhook Errors', () => {
         .send(JSON.stringify({ type: 'payment_intent.succeeded' }));
 
       expect(res.status).toBe(HTTP_STATUS.BAD_REQUEST);
-      expect(res.body.error.message).toBe(WEBHOOK_ERRORS.INVALID_PAYLOAD);
+      expect(res.body.error.message).toBe(WEBHOOK_ERRORS.INVALID_PAYLOAD.message);
     });
   });
 });

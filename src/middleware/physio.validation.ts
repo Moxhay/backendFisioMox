@@ -1,7 +1,7 @@
 import { param, body } from 'express-validator';
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
-import { HTTP_STATUS, PHYSIO_ERRORS, GENERAL_ERRORS } from '../constants/errors';
+import { PHYSIO_ERRORS, GENERAL_ERRORS } from '../constants/errors';
 import { error } from '../utils/response';
 import { handleValidationErrors } from './validation.middleware';
 import { Role } from '../generated/prisma/enums';
@@ -32,7 +32,7 @@ export async function validatePhysioExists(req: Request, res: Response, next: Ne
     });
 
     if (!physio) {
-      res.status(HTTP_STATUS.NOT_FOUND).json(error(PHYSIO_ERRORS.NOT_FOUND, HTTP_STATUS.NOT_FOUND));
+      res.status(PHYSIO_ERRORS.NOT_FOUND.status).json(error(PHYSIO_ERRORS.NOT_FOUND));
       return;
     }
 
@@ -64,7 +64,7 @@ export async function validateCanUpdatePrice(req: Request, res: Response, next: 
     });
 
     if (!physio) {
-      res.status(HTTP_STATUS.NOT_FOUND).json(error(PHYSIO_ERRORS.NOT_FOUND, HTTP_STATUS.NOT_FOUND));
+      res.status(PHYSIO_ERRORS.NOT_FOUND.status).json(error(PHYSIO_ERRORS.NOT_FOUND));
       return;
     }
 
@@ -72,7 +72,7 @@ export async function validateCanUpdatePrice(req: Request, res: Response, next: 
     const isOwnProfile = user.id === id;
 
     if (!isAdmin && !isOwnProfile) {
-      res.status(HTTP_STATUS.FORBIDDEN).json(error(GENERAL_ERRORS.FORBIDDEN, HTTP_STATUS.FORBIDDEN));
+      res.status(GENERAL_ERRORS.FORBIDDEN.status).json(error(GENERAL_ERRORS.FORBIDDEN));
       return;
     }
 

@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
 import { success, error } from '../utils/response';
 import { formatTimeFromDate, isTimeWithinRange } from '../utils/time';
-import { HTTP_STATUS, WORK_SCHEDULE_ERRORS } from '../constants/errors';
+import { WORK_SCHEDULE_ERRORS } from '../constants/errors';
 import { SLOT_DURATION_MINUTES } from '../constants/appointments';
 import { processRefundInTransaction } from '../utils/refund';
 
@@ -60,8 +60,8 @@ export async function setWorkSchedule(req: Request, res: Response, next: NextFun
     );
 
     if (conflictingAppointments.length > 0 && !confirmCancellation) {
-      res.status(HTTP_STATUS.CONFLICT).json(
-        error(WORK_SCHEDULE_ERRORS.APPOINTMENTS_CONFLICT, HTTP_STATUS.CONFLICT, {
+      res.status(WORK_SCHEDULE_ERRORS.APPOINTMENTS_CONFLICT.status).json(
+        error(WORK_SCHEDULE_ERRORS.APPOINTMENTS_CONFLICT, {
           conflictingAppointments: conflictingAppointments.map((apt: AppointmentWithPaymentAndPatient) => ({
             id: apt.id,
             dateTime: apt.dateTime,

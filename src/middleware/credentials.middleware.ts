@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
 import { comparePassword } from '../utils/password';
-import { HTTP_STATUS, AUTH_ERRORS } from '../constants/errors';
+import { AUTH_ERRORS } from '../constants/errors';
 import { error } from '../utils/response';
 
 const DUMMY_HASH = '$2b$10$dummyhashtopreventtimingattacksxxxxxxxxxxxxxxxxxxxxxxx';
@@ -15,7 +15,7 @@ export async function validateCredentials(req: Request, res: Response, next: Nex
     const validPassword = await comparePassword(password, user?.password ?? DUMMY_HASH);
 
     if (!user || !validPassword) {
-      res.status(HTTP_STATUS.UNAUTHORIZED).json(error(AUTH_ERRORS.INVALID_CREDENTIALS, HTTP_STATUS.UNAUTHORIZED));
+      res.status(AUTH_ERRORS.INVALID_CREDENTIALS.status).json(error(AUTH_ERRORS.INVALID_CREDENTIALS));
       return;
     }
 

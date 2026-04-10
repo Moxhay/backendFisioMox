@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
-import { HTTP_STATUS, AUTH_ERRORS } from '../constants/errors';
+import { AUTH_ERRORS } from '../constants/errors';
 import { error } from '../utils/response';
 
 export async function authenticate(req: Request, res: Response, next: NextFunction) {
@@ -8,7 +8,7 @@ export async function authenticate(req: Request, res: Response, next: NextFuncti
     const token = req.signedCookies?.session_token;
 
     if (!token || token === false) {
-      res.status(HTTP_STATUS.UNAUTHORIZED).json(error(AUTH_ERRORS.NOT_AUTHENTICATED, HTTP_STATUS.UNAUTHORIZED));
+      res.status(AUTH_ERRORS.NOT_AUTHENTICATED.status).json(error(AUTH_ERRORS.NOT_AUTHENTICATED));
       return;
     }
 
@@ -18,13 +18,13 @@ export async function authenticate(req: Request, res: Response, next: NextFuncti
     });
 
     if (!session) {
-      res.status(HTTP_STATUS.UNAUTHORIZED).json(error(AUTH_ERRORS.INVALID_SESSION, HTTP_STATUS.UNAUTHORIZED));
+      res.status(AUTH_ERRORS.INVALID_SESSION.status).json(error(AUTH_ERRORS.INVALID_SESSION));
       return;
     }
 
     if (session.expiresAt < new Date()) {
       await prisma.session.delete({ where: { id: session.id } });
-      res.status(HTTP_STATUS.UNAUTHORIZED).json(error(AUTH_ERRORS.SESSION_EXPIRED, HTTP_STATUS.UNAUTHORIZED));
+      res.status(AUTH_ERRORS.SESSION_EXPIRED.status).json(error(AUTH_ERRORS.SESSION_EXPIRED));
       return;
     }
 

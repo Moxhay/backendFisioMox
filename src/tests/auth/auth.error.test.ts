@@ -121,7 +121,7 @@ describe('Auth Errors', () => {
       });
 
       expect(res.status).toBe(HTTP_STATUS.UNAUTHORIZED);
-      expect(res.body.error.message).toBe(AUTH_ERRORS.INVALID_CREDENTIALS);
+      expect(res.body.error.message).toBe(AUTH_ERRORS.INVALID_CREDENTIALS.message);
     });
 
     it('should fail with non-existent email', async () => {
@@ -131,7 +131,7 @@ describe('Auth Errors', () => {
       });
 
       expect(res.status).toBe(HTTP_STATUS.UNAUTHORIZED);
-      expect(res.body.error.message).toBe(AUTH_ERRORS.INVALID_CREDENTIALS);
+      expect(res.body.error.message).toBe(AUTH_ERRORS.INVALID_CREDENTIALS.message);
     });
   });
 
@@ -140,7 +140,7 @@ describe('Auth Errors', () => {
       const res = await request(app).post('/api/v1/auth/logout');
 
       expect(res.status).toBe(HTTP_STATUS.UNAUTHORIZED);
-      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED);
+      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED.message);
     });
   });
 
@@ -149,7 +149,7 @@ describe('Auth Errors', () => {
       const res = await request(app).get('/api/v1/auth/me');
 
       expect(res.status).toBe(HTTP_STATUS.UNAUTHORIZED);
-      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED);
+      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED.message);
     });
   });
 });

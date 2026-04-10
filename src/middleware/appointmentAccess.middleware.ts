@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
-import { HTTP_STATUS, GENERAL_ERRORS, APPOINTMENT_ERRORS } from '../constants/errors';
+import { GENERAL_ERRORS, APPOINTMENT_ERRORS } from '../constants/errors';
 import { error } from '../utils/response';
 
 const appointmentInclude = {
@@ -15,7 +15,7 @@ export async function validateAppointmentAccess(req: Request, res: Response, nex
     const appointmentId = req.params.id as string;
 
     if (!appointmentId) {
-      res.status(HTTP_STATUS.BAD_REQUEST).json(error(APPOINTMENT_ERRORS.ID_REQUIRED, HTTP_STATUS.BAD_REQUEST));
+      res.status(APPOINTMENT_ERRORS.ID_REQUIRED.status).json(error(APPOINTMENT_ERRORS.ID_REQUIRED));
       return;
     }
 
@@ -25,12 +25,12 @@ export async function validateAppointmentAccess(req: Request, res: Response, nex
     });
 
     if (!appointment) {
-      res.status(HTTP_STATUS.NOT_FOUND).json(error(APPOINTMENT_ERRORS.NOT_FOUND, HTTP_STATUS.NOT_FOUND));
+      res.status(APPOINTMENT_ERRORS.NOT_FOUND.status).json(error(APPOINTMENT_ERRORS.NOT_FOUND));
       return;
     }
 
     if (appointment.physioId !== userId && appointment.patientId !== userId) {
-      res.status(HTTP_STATUS.FORBIDDEN).json(error(GENERAL_ERRORS.ACCESS_DENIED, HTTP_STATUS.FORBIDDEN));
+      res.status(GENERAL_ERRORS.ACCESS_DENIED.status).json(error(GENERAL_ERRORS.ACCESS_DENIED));
       return;
     }
 
@@ -47,7 +47,7 @@ export async function validateAppointmentNotExpired(req: Request, res: Response,
 
     if (appointment.expiresAt && appointment.expiresAt < new Date()) {
       await prisma.appointment.delete({ where: { id: appointment.id } });
-      res.status(HTTP_STATUS.BAD_REQUEST).json(error(APPOINTMENT_ERRORS.RESERVATION_EXPIRED, HTTP_STATUS.BAD_REQUEST));
+      res.status(APPOINTMENT_ERRORS.RESERVATION_EXPIRED.status).json(error(APPOINTMENT_ERRORS.RESERVATION_EXPIRED));
       return;
     }
 
@@ -59,7 +59,7 @@ export async function validateAppointmentNotExpired(req: Request, res: Response,
 
 export function validateAppointmentNotCancelled(req: Request, res: Response, next: NextFunction) {
   if (req.appointment!.status === 'CANCELLED') {
-    res.status(HTTP_STATUS.BAD_REQUEST).json(error(APPOINTMENT_ERRORS.ALREADY_CANCELLED, HTTP_STATUS.BAD_REQUEST));
+    res.status(APPOINTMENT_ERRORS.ALREADY_CANCELLED.status).json(error(APPOINTMENT_ERRORS.ALREADY_CANCELLED));
     return;
   }
   next();
@@ -76,17 +76,17 @@ export async function validatePendingAppointmentOwnership(req: Request, res: Res
     });
 
     if (!appointment) {
-      res.status(HTTP_STATUS.NOT_FOUND).json(error(APPOINTMENT_ERRORS.NOT_FOUND, HTTP_STATUS.NOT_FOUND));
+      res.status(APPOINTMENT_ERRORS.NOT_FOUND.status).json(error(APPOINTMENT_ERRORS.NOT_FOUND));
       return;
     }
 
     if (appointment.patientId !== userId) {
-      res.status(HTTP_STATUS.FORBIDDEN).json(error(GENERAL_ERRORS.ACCESS_DENIED, HTTP_STATUS.FORBIDDEN));
+      res.status(GENERAL_ERRORS.ACCESS_DENIED.status).json(error(GENERAL_ERRORS.ACCESS_DENIED));
       return;
     }
 
     if (appointment.status !== 'PENDING') {
-      res.status(HTTP_STATUS.BAD_REQUEST).json(error(APPOINTMENT_ERRORS.NOT_PENDING, HTTP_STATUS.BAD_REQUEST));
+      res.status(APPOINTMENT_ERRORS.NOT_PENDING.status).json(error(APPOINTMENT_ERRORS.NOT_PENDING));
       return;
     }
 
@@ -111,7 +111,7 @@ export function validateCancellationTime(req: Request, res: Response, next: Next
   const now = Date.now();
 
   if (appointmentTime - now < TWO_HOURS_MS) {
-    res.status(HTTP_STATUS.BAD_REQUEST).json(error(APPOINTMENT_ERRORS.TOO_LATE_TO_CANCEL, HTTP_STATUS.BAD_REQUEST));
+    res.status(APPOINTMENT_ERRORS.TOO_LATE_TO_CANCEL.status).json(error(APPOINTMENT_ERRORS.TOO_LATE_TO_CANCEL));
     return;
   }
   next();

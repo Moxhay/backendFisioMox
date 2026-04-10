@@ -55,7 +55,7 @@ describe('WorkSchedule Errors', () => {
       const res = await request(app).get('/api/v1/work-schedule');
 
       expect(res.status).toBe(HTTP_STATUS.UNAUTHORIZED);
-      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED);
+      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED.message);
     });
 
     it('should fail for patient role', async () => {
@@ -66,7 +66,7 @@ describe('WorkSchedule Errors', () => {
         .set('Cookie', cookie);
 
       expect(res.status).toBe(HTTP_STATUS.FORBIDDEN);
-      expect(res.body.error.message).toBe(GENERAL_ERRORS.FORBIDDEN);
+      expect(res.body.error.message).toBe(GENERAL_ERRORS.FORBIDDEN.message);
     });
   });
 
@@ -77,7 +77,7 @@ describe('WorkSchedule Errors', () => {
         .send({ schedules: [{ dayOfWeek: 1, startTime: '09:00', endTime: '17:00' }] });
 
       expect(res.status).toBe(HTTP_STATUS.UNAUTHORIZED);
-      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED);
+      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED.message);
     });
 
     it('should fail for patient role', async () => {
@@ -89,7 +89,7 @@ describe('WorkSchedule Errors', () => {
         .send({ schedules: [{ dayOfWeek: 1, startTime: '09:00', endTime: '17:00' }] });
 
       expect(res.status).toBe(HTTP_STATUS.FORBIDDEN);
-      expect(res.body.error.message).toBe(GENERAL_ERRORS.FORBIDDEN);
+      expect(res.body.error.message).toBe(GENERAL_ERRORS.FORBIDDEN.message);
     });
 
     it('should fail with invalid dayOfWeek', async () => {
@@ -146,7 +146,7 @@ describe('WorkSchedule Errors', () => {
         .send({ schedules: [{ dayOfWeek: 2, startTime: '09:00', endTime: '17:00' }] });
 
       expect(res.status).toBe(HTTP_STATUS.CONFLICT);
-      expect(res.body.error.message).toBe(WORK_SCHEDULE_ERRORS.APPOINTMENTS_CONFLICT);
+      expect(res.body.error.message).toBe(WORK_SCHEDULE_ERRORS.APPOINTMENTS_CONFLICT.message);
       expect(res.body.error.details.conflictingAppointments).toBeDefined();
       expect(res.body.error.details.conflictingAppointments.length).toBe(1);
     });

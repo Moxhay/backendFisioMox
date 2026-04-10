@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
-import { HTTP_STATUS, SCHEDULE_EXCEPTION_ERRORS, GENERAL_ERRORS } from '../constants/errors';
+import { SCHEDULE_EXCEPTION_ERRORS, GENERAL_ERRORS } from '../constants/errors';
 import { error } from '../utils/response';
 
 export async function validateNoDuplicateException(
@@ -20,7 +20,7 @@ export async function validateNoDuplicateException(
     });
 
     if (existingException) {
-      res.status(HTTP_STATUS.CONFLICT).json(error(SCHEDULE_EXCEPTION_ERRORS.ALREADY_EXISTS, HTTP_STATUS.CONFLICT));
+      res.status(SCHEDULE_EXCEPTION_ERRORS.ALREADY_EXISTS.status).json(error(SCHEDULE_EXCEPTION_ERRORS.ALREADY_EXISTS));
       return;
     }
 
@@ -44,12 +44,12 @@ export async function validateScheduleExceptionOwnership(
     });
 
     if (!exception) {
-      res.status(HTTP_STATUS.NOT_FOUND).json(error(SCHEDULE_EXCEPTION_ERRORS.NOT_FOUND, HTTP_STATUS.NOT_FOUND));
+      res.status(SCHEDULE_EXCEPTION_ERRORS.NOT_FOUND.status).json(error(SCHEDULE_EXCEPTION_ERRORS.NOT_FOUND));
       return;
     }
 
     if (exception.physioId !== physioId) {
-      res.status(HTTP_STATUS.FORBIDDEN).json(error(GENERAL_ERRORS.ACCESS_DENIED, HTTP_STATUS.FORBIDDEN));
+      res.status(GENERAL_ERRORS.ACCESS_DENIED.status).json(error(GENERAL_ERRORS.ACCESS_DENIED));
       return;
     }
 

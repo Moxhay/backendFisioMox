@@ -1,3 +1,5 @@
+import type { ApiError } from '../constants/errors';
+
 interface Pagination {
   page: number;
   limit: number;
@@ -15,10 +17,10 @@ export function success<T>(data: T, pagination?: Pagination) {
   return response;
 }
 
-export function error<T = undefined>(message: string, code: number, details?: T) {
+export function error<T = undefined>(apiError: ApiError, details?: T) {
   const response: { data: null; error: { message: string; errorCode: number; details?: T } } = {
     data: null,
-    error: { message, errorCode: code },
+    error: { message: apiError.message, errorCode: apiError.status },
   };
 
   if (details !== undefined) {

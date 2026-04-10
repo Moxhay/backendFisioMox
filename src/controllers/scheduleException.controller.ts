@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
-import { HTTP_STATUS, SCHEDULE_EXCEPTION_ERRORS } from '../constants/errors';
+import { SCHEDULE_EXCEPTION_ERRORS, HTTP_STATUS } from '../constants/errors';
 import { SLOT_DURATION_MINUTES } from '../constants/appointments';
 import { success, error } from '../utils/response';
 import { formatTimeFromDate, isTimeWithinRange } from '../utils/time';
@@ -68,8 +68,8 @@ export async function createScheduleException(req: Request, res: Response, next:
     );
 
     if (conflictingAppointments.length > 0 && !confirmCancellation) {
-      res.status(HTTP_STATUS.CONFLICT).json(
-        error(SCHEDULE_EXCEPTION_ERRORS.APPOINTMENTS_CONFLICT, HTTP_STATUS.CONFLICT, {
+      res.status(SCHEDULE_EXCEPTION_ERRORS.APPOINTMENTS_CONFLICT.status).json(
+        error(SCHEDULE_EXCEPTION_ERRORS.APPOINTMENTS_CONFLICT, {
           conflictingAppointments: conflictingAppointments.map((apt: AppointmentWithPaymentAndPatient) => ({
             id: apt.id,
             dateTime: apt.dateTime,

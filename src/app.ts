@@ -6,7 +6,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import routes from './routes';
 import { webhookRouter } from './routes/webhook.routes';
-import { HTTP_STATUS, GENERAL_ERRORS } from './constants/errors';
+import { GENERAL_ERRORS } from './constants/errors';
 import { error } from './utils/response';
 import { logger } from './utils/logger';
 
@@ -38,14 +38,14 @@ app.get('/health', (req, res) => {
 });
 
 app.use((req, res) => {
-  res.status(HTTP_STATUS.NOT_FOUND).json(error('Not found', HTTP_STATUS.NOT_FOUND));
+  res.status(GENERAL_ERRORS.NOT_FOUND.status).json(error(GENERAL_ERRORS.NOT_FOUND));
 });
 
 app.use((err: Error, req: express.Request, res: express.Response, _next: express.NextFunction) => {
   logger.error('Unhandled error', err, { path: req.path, method: req.method });
   res
-    .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
-    .json(error(GENERAL_ERRORS.INTERNAL_SERVER_ERROR, HTTP_STATUS.INTERNAL_SERVER_ERROR));
+    .status(GENERAL_ERRORS.INTERNAL_SERVER_ERROR.status)
+    .json(error(GENERAL_ERRORS.INTERNAL_SERVER_ERROR));
 });
 
 export default app;

@@ -90,7 +90,7 @@ describe('Appointment Errors', () => {
         });
 
       expect(res.status).toBe(HTTP_STATUS.UNAUTHORIZED);
-      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED);
+      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED.message);
     });
 
     it('should fail when booking as physio', async () => {
@@ -106,7 +106,7 @@ describe('Appointment Errors', () => {
         });
 
       expect(res.status).toBe(HTTP_STATUS.FORBIDDEN);
-      expect(res.body.error.message).toBe(GENERAL_ERRORS.FORBIDDEN);
+      expect(res.body.error.message).toBe(GENERAL_ERRORS.FORBIDDEN.message);
     });
 
     it('should fail with non-existent physio', async () => {
@@ -122,7 +122,7 @@ describe('Appointment Errors', () => {
         });
 
       expect(res.status).toBe(HTTP_STATUS.NOT_FOUND);
-      expect(res.body.error.message).toBe(PHYSIO_ERRORS.NOT_FOUND);
+      expect(res.body.error.message).toBe(PHYSIO_ERRORS.NOT_FOUND.message);
     });
 
     it('should fail when slot is already booked', async () => {
@@ -140,7 +140,7 @@ describe('Appointment Errors', () => {
         .send({ physioId: physio.id, dateTime });
 
       expect(res.status).toBe(HTTP_STATUS.CONFLICT);
-      expect(res.body.error.message).toBe(APPOINTMENT_ERRORS.SLOT_ALREADY_BOOKED);
+      expect(res.body.error.message).toBe(APPOINTMENT_ERRORS.SLOT_ALREADY_BOOKED.message);
     });
   });
 
@@ -149,7 +149,7 @@ describe('Appointment Errors', () => {
       const res = await request(app).get('/api/v1/appointments');
 
       expect(res.status).toBe(HTTP_STATUS.UNAUTHORIZED);
-      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED);
+      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED.message);
     });
   });
 
@@ -158,7 +158,7 @@ describe('Appointment Errors', () => {
       const res = await request(app).patch('/api/v1/appointments/some-id/cancel');
 
       expect(res.status).toBe(HTTP_STATUS.UNAUTHORIZED);
-      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED);
+      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED.message);
     });
 
     it('should fail with non-existent appointment', async () => {
@@ -169,7 +169,7 @@ describe('Appointment Errors', () => {
         .set('Cookie', cookie);
 
       expect(res.status).toBe(HTTP_STATUS.NOT_FOUND);
-      expect(res.body.error.message).toBe(APPOINTMENT_ERRORS.NOT_FOUND);
+      expect(res.body.error.message).toBe(APPOINTMENT_ERRORS.NOT_FOUND.message);
     });
 
     it('should fail when cancelling another users appointment', async () => {
@@ -185,7 +185,7 @@ describe('Appointment Errors', () => {
         .set('Cookie', otherPatientCookie);
 
       expect(res.status).toBe(HTTP_STATUS.FORBIDDEN);
-      expect(res.body.error.message).toBe(GENERAL_ERRORS.ACCESS_DENIED);
+      expect(res.body.error.message).toBe(GENERAL_ERRORS.ACCESS_DENIED.message);
     });
 
     it('should fail when appointment is already cancelled', async () => {
@@ -204,7 +204,7 @@ describe('Appointment Errors', () => {
         .set('Cookie', patientCookie);
 
       expect(res.status).toBe(HTTP_STATUS.BAD_REQUEST);
-      expect(res.body.error.message).toBe(APPOINTMENT_ERRORS.ALREADY_CANCELLED);
+      expect(res.body.error.message).toBe(APPOINTMENT_ERRORS.ALREADY_CANCELLED.message);
     });
 
     it('should fail when cancelling less than 2 hours before appointment', async () => {
@@ -227,7 +227,7 @@ describe('Appointment Errors', () => {
         .set('Cookie', patientCookie);
 
       expect(res.status).toBe(HTTP_STATUS.BAD_REQUEST);
-      expect(res.body.error.message).toBe(APPOINTMENT_ERRORS.TOO_LATE_TO_CANCEL);
+      expect(res.body.error.message).toBe(APPOINTMENT_ERRORS.TOO_LATE_TO_CANCEL.message);
     });
   });
 
@@ -238,7 +238,7 @@ describe('Appointment Errors', () => {
         .query({ physioId: '00000000-0000-0000-0000-000000000000', startDate: '2025-01-01' });
 
       expect(res.status).toBe(HTTP_STATUS.UNAUTHORIZED);
-      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED);
+      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED.message);
     });
 
     it('should fail with non-existent physio', async () => {
@@ -268,7 +268,7 @@ describe('Appointment Errors', () => {
       const res = await request(app).delete('/api/v1/appointments/some-id');
 
       expect(res.status).toBe(HTTP_STATUS.UNAUTHORIZED);
-      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED);
+      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED.message);
     });
 
     it('should fail with non-existent appointment', async () => {
@@ -325,7 +325,7 @@ describe('Appointment Errors', () => {
         .query({ startDate: '2025-01-01' });
 
       expect(res.status).toBe(HTTP_STATUS.UNAUTHORIZED);
-      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED);
+      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED.message);
     });
 
     it('should fail without startDate', async () => {
@@ -344,7 +344,7 @@ describe('Appointment Errors', () => {
       const res = await request(app).get('/api/v1/appointments/stats');
 
       expect(res.status).toBe(HTTP_STATUS.UNAUTHORIZED);
-      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED);
+      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED.message);
     });
   });
 
@@ -355,7 +355,7 @@ describe('Appointment Errors', () => {
         .send({ appointmentId: 'some-id', paymentMethodId: 'pm_test' });
 
       expect(res.status).toBe(HTTP_STATUS.UNAUTHORIZED);
-      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED);
+      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED.message);
     });
 
     it('should fail with non-existent appointment', async () => {

@@ -63,7 +63,7 @@ describe('ScheduleException Errors', () => {
       const res = await request(app).get('/api/v1/schedule-exceptions');
 
       expect(res.status).toBe(HTTP_STATUS.UNAUTHORIZED);
-      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED);
+      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED.message);
     });
 
     it('should fail for patient role', async () => {
@@ -74,7 +74,7 @@ describe('ScheduleException Errors', () => {
         .set('Cookie', cookie);
 
       expect(res.status).toBe(HTTP_STATUS.FORBIDDEN);
-      expect(res.body.error.message).toBe(GENERAL_ERRORS.FORBIDDEN);
+      expect(res.body.error.message).toBe(GENERAL_ERRORS.FORBIDDEN.message);
     });
   });
 
@@ -85,7 +85,7 @@ describe('ScheduleException Errors', () => {
         .send({ date: getFutureDate(7), isWorkingDay: false });
 
       expect(res.status).toBe(HTTP_STATUS.UNAUTHORIZED);
-      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED);
+      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED.message);
     });
 
     it('should fail for patient role', async () => {
@@ -97,7 +97,7 @@ describe('ScheduleException Errors', () => {
         .send({ date: getFutureDate(7), isWorkingDay: false });
 
       expect(res.status).toBe(HTTP_STATUS.FORBIDDEN);
-      expect(res.body.error.message).toBe(GENERAL_ERRORS.FORBIDDEN);
+      expect(res.body.error.message).toBe(GENERAL_ERRORS.FORBIDDEN.message);
     });
 
     it('should fail with duplicate date', async () => {
@@ -115,7 +115,7 @@ describe('ScheduleException Errors', () => {
         .send({ date, isWorkingDay: true, startTime: '10:00', endTime: '14:00' });
 
       expect(res.status).toBe(HTTP_STATUS.CONFLICT);
-      expect(res.body.error.message).toBe(SCHEDULE_EXCEPTION_ERRORS.ALREADY_EXISTS);
+      expect(res.body.error.message).toBe(SCHEDULE_EXCEPTION_ERRORS.ALREADY_EXISTS.message);
     });
 
     it('should fail with invalid date format', async () => {
@@ -183,7 +183,7 @@ describe('ScheduleException Errors', () => {
         .send({ date: dateString, isWorkingDay: false });
 
       expect(res.status).toBe(HTTP_STATUS.CONFLICT);
-      expect(res.body.error.message).toBe(SCHEDULE_EXCEPTION_ERRORS.APPOINTMENTS_CONFLICT);
+      expect(res.body.error.message).toBe(SCHEDULE_EXCEPTION_ERRORS.APPOINTMENTS_CONFLICT.message);
       expect(res.body.error.details.conflictingAppointments).toBeDefined();
       expect(res.body.error.details.conflictingAppointments.length).toBe(1);
     });
@@ -231,7 +231,7 @@ describe('ScheduleException Errors', () => {
       );
 
       expect(res.status).toBe(HTTP_STATUS.UNAUTHORIZED);
-      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED);
+      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED.message);
     });
 
     it('should fail for patient role', async () => {
@@ -242,7 +242,7 @@ describe('ScheduleException Errors', () => {
         .set('Cookie', cookie);
 
       expect(res.status).toBe(HTTP_STATUS.FORBIDDEN);
-      expect(res.body.error.message).toBe(GENERAL_ERRORS.FORBIDDEN);
+      expect(res.body.error.message).toBe(GENERAL_ERRORS.FORBIDDEN.message);
     });
 
     it('should fail with non-existent exception', async () => {
@@ -253,7 +253,7 @@ describe('ScheduleException Errors', () => {
         .set('Cookie', cookie);
 
       expect(res.status).toBe(HTTP_STATUS.NOT_FOUND);
-      expect(res.body.error.message).toBe(SCHEDULE_EXCEPTION_ERRORS.NOT_FOUND);
+      expect(res.body.error.message).toBe(SCHEDULE_EXCEPTION_ERRORS.NOT_FOUND.message);
     });
 
     it('should fail when deleting another physio exception', async () => {
@@ -270,7 +270,7 @@ describe('ScheduleException Errors', () => {
         .set('Cookie', physio2Cookie);
 
       expect(res.status).toBe(HTTP_STATUS.FORBIDDEN);
-      expect(res.body.error.message).toBe(GENERAL_ERRORS.ACCESS_DENIED);
+      expect(res.body.error.message).toBe(GENERAL_ERRORS.ACCESS_DENIED.message);
     });
   });
 });

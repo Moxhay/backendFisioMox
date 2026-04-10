@@ -31,14 +31,14 @@ describe('Physio Errors', () => {
       );
 
       expect(res.status).toBe(HTTP_STATUS.NOT_FOUND);
-      expect(res.body.error.message).toBe(PHYSIO_ERRORS.NOT_FOUND);
+      expect(res.body.error.message).toBe(PHYSIO_ERRORS.NOT_FOUND.message);
     });
 
     it('should fail with invalid UUID', async () => {
       const res = await request(app).get('/api/v1/physios/invalid-id');
 
       expect(res.status).toBe(HTTP_STATUS.NOT_FOUND);
-      expect(res.body.error.message).toBe(PHYSIO_ERRORS.NOT_FOUND);
+      expect(res.body.error.message).toBe(PHYSIO_ERRORS.NOT_FOUND.message);
     });
   });
 
@@ -49,7 +49,7 @@ describe('Physio Errors', () => {
         .send({ pricePerSession: 5000 });
 
       expect(res.status).toBe(HTTP_STATUS.UNAUTHORIZED);
-      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED);
+      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED.message);
     });
 
     it('should fail when updating another physio price', async () => {
@@ -62,7 +62,7 @@ describe('Physio Errors', () => {
         .send({ pricePerSession: 7500 });
 
       expect(res.status).toBe(HTTP_STATUS.FORBIDDEN);
-      expect(res.body.error.message).toBe(GENERAL_ERRORS.FORBIDDEN);
+      expect(res.body.error.message).toBe(GENERAL_ERRORS.FORBIDDEN.message);
     });
 
     it('should fail when patient tries to update price', async () => {
@@ -75,7 +75,7 @@ describe('Physio Errors', () => {
         .send({ pricePerSession: 7500 });
 
       expect(res.status).toBe(HTTP_STATUS.FORBIDDEN);
-      expect(res.body.error.message).toBe(GENERAL_ERRORS.FORBIDDEN);
+      expect(res.body.error.message).toBe(GENERAL_ERRORS.FORBIDDEN.message);
     });
 
     it('should fail with invalid price', async () => {

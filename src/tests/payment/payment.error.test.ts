@@ -22,7 +22,7 @@ describe('Payment Errors', () => {
       const res = await request(app).get('/api/v1/payments');
 
       expect(res.status).toBe(HTTP_STATUS.UNAUTHORIZED);
-      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED);
+      expect(res.body.error.message).toBe(AUTH_ERRORS.NOT_AUTHENTICATED.message);
     });
   });
 });

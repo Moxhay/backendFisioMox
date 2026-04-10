@@ -11,54 +11,150 @@ export const HTTP_STATUS = {
 } as const;
 
 export const GENERAL_ERRORS = {
-  INTERNAL_SERVER_ERROR: 'Internal server error',
-  FORBIDDEN: 'Forbidden',
-  ACCESS_DENIED: 'Access denied',
+  INTERNAL_SERVER_ERROR: {
+    message: 'Internal server error',
+    status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
+  },
+  NOT_FOUND: {
+    message: 'Not found',
+    status: HTTP_STATUS.NOT_FOUND,
+  },
+  FORBIDDEN: {
+    message: 'Forbidden',
+    status: HTTP_STATUS.FORBIDDEN,
+  },
+  ACCESS_DENIED: {
+    message: 'Access denied',
+    status: HTTP_STATUS.FORBIDDEN,
+  },
 } as const;
 
 export const AUTH_ERRORS = {
-  NOT_AUTHENTICATED: 'Not authenticated',
-  INVALID_SESSION: 'Invalid session',
-  SESSION_EXPIRED: 'Session expired',
-  INVALID_CREDENTIALS: 'Invalid credentials',
+  NOT_AUTHENTICATED: {
+    message: 'Not authenticated',
+    status: HTTP_STATUS.UNAUTHORIZED,
+  },
+  INVALID_SESSION: {
+    message: 'Invalid session',
+    status: HTTP_STATUS.UNAUTHORIZED,
+  },
+  SESSION_EXPIRED: {
+    message: 'Session expired',
+    status: HTTP_STATUS.UNAUTHORIZED,
+  },
+  INVALID_CREDENTIALS: {
+    message: 'Invalid credentials',
+    status: HTTP_STATUS.UNAUTHORIZED,
+  },
 } as const;
 
 export const APPOINTMENT_ERRORS = {
-  ID_REQUIRED: 'Appointment ID is required',
-  NOT_FOUND: 'Appointment not found',
-  ALREADY_CANCELLED: 'Appointment already cancelled',
-  SLOT_ALREADY_BOOKED: 'Slot already booked',
-  TOO_LATE_TO_CANCEL: 'Cannot cancel appointment less than 2 hours before scheduled time',
-  NOT_PENDING: 'Appointment is not pending',
-  RESERVATION_EXPIRED: 'Reservation expired',
+  ID_REQUIRED: {
+    message: 'Appointment ID is required',
+    status: HTTP_STATUS.BAD_REQUEST,
+  },
+  NOT_FOUND: {
+    message: 'Appointment not found',
+    status: HTTP_STATUS.NOT_FOUND,
+  },
+  ALREADY_CANCELLED: {
+    message: 'Appointment already cancelled',
+    status: HTTP_STATUS.BAD_REQUEST,
+  },
+  SLOT_ALREADY_BOOKED: {
+    message: 'Slot already booked',
+    status: HTTP_STATUS.CONFLICT,
+  },
+  TOO_LATE_TO_CANCEL: {
+    message: 'Cannot cancel appointment less than 2 hours before scheduled time',
+    status: HTTP_STATUS.BAD_REQUEST,
+  },
+  NOT_PENDING: {
+    message: 'Appointment is not pending',
+    status: HTTP_STATUS.BAD_REQUEST,
+  },
+  RESERVATION_EXPIRED: {
+    message: 'Reservation expired',
+    status: HTTP_STATUS.BAD_REQUEST,
+  },
 } as const;
 
 export const PHYSIO_ERRORS = {
-  NOT_FOUND: 'Physio not found',
-  ID_AND_DATE_REQUIRED: 'physioId and date are required',
-  DOES_NOT_WORK_THIS_DAY: 'Physio does not work this day',
-  NO_PRICE_CONFIGURED: 'Physio has no price configured',
-  DAY_OFF: 'Day off',
+  NOT_FOUND: {
+    message: 'Physio not found',
+    status: HTTP_STATUS.NOT_FOUND,
+  },
+  ID_AND_DATE_REQUIRED: {
+    message: 'physioId and date are required',
+    status: HTTP_STATUS.BAD_REQUEST,
+  },
+  DOES_NOT_WORK_THIS_DAY: {
+    message: 'Physio does not work this day',
+    status: HTTP_STATUS.NOT_FOUND,
+  },
+  NO_PRICE_CONFIGURED: {
+    message: 'Physio has no price configured',
+    status: HTTP_STATUS.BAD_REQUEST,
+  },
+  DAY_OFF: {
+    message: 'Day off',
+    status: HTTP_STATUS.UNPROCESSABLE_ENTITY,
+  },
 } as const;
 
 export const SCHEDULE_EXCEPTION_ERRORS = {
-  NOT_FOUND: 'Schedule exception not found',
-  ALREADY_EXISTS: 'An exception already exists for this date',
-  APPOINTMENTS_CONFLICT: 'There are appointments that conflict with this exception',
+  NOT_FOUND: {
+    message: 'Schedule exception not found',
+    status: HTTP_STATUS.NOT_FOUND,
+  },
+  ALREADY_EXISTS: {
+    message: 'An exception already exists for this date',
+    status: HTTP_STATUS.CONFLICT,
+  },
+  APPOINTMENTS_CONFLICT: {
+    message: 'There are appointments that conflict with this exception',
+    status: HTTP_STATUS.CONFLICT,
+  },
 } as const;
 
 export const WORK_SCHEDULE_ERRORS = {
-  APPOINTMENTS_CONFLICT: 'There are appointments that conflict with the new schedule',
+  APPOINTMENTS_CONFLICT: {
+    message: 'There are appointments that conflict with the new schedule',
+    status: HTTP_STATUS.CONFLICT,
+  },
 } as const;
 
 export const PAYMENT_ERRORS = {
-  NOT_FOUND: 'Payment not found',
-  ALREADY_REFUNDED: 'Payment already refunded',
-  PAYMENT_FAILED: 'Payment failed',
+  NOT_FOUND: {
+    message: 'Payment not found',
+    status: HTTP_STATUS.NOT_FOUND,
+  },
+  ALREADY_REFUNDED: {
+    message: 'Payment already refunded',
+    status: HTTP_STATUS.CONFLICT,
+  },
+  PAYMENT_FAILED: {
+    message: 'Payment failed',
+    status: HTTP_STATUS.BAD_REQUEST,
+  },
 } as const;
 
 export const WEBHOOK_ERRORS = {
-  MISSING_STRIPE_SIGNATURE: 'Missing stripe-signature header',
-  MISSING_APPOINTMENT_ID_METADATA: 'Missing appointmentId in metadata',
-  INVALID_PAYLOAD: 'Invalid webhook payload',
+  MISSING_STRIPE_SIGNATURE: {
+    message: 'Missing stripe-signature header',
+    status: HTTP_STATUS.BAD_REQUEST,
+  },
+  MISSING_APPOINTMENT_ID_METADATA: {
+    message: 'Missing appointmentId in metadata',
+    status: HTTP_STATUS.BAD_REQUEST,
+  },
+  INVALID_PAYLOAD: {
+    message: 'Invalid webhook payload',
+    status: HTTP_STATUS.BAD_REQUEST,
+  },
 } as const;
+
+export type ApiError = {
+  message: string;
+  status: number;
+};

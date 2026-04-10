@@ -15,7 +15,7 @@ import {
 import { calculateTotals, calculateSlotsForMonth, groupStatsByDay } from '../utils/statsCalculations';
 import { buildUserWhereClause, appointmentInclude } from '../utils/queryBuilders';
 import { processRefundIfNeeded } from '../utils/refund';
-import { HTTP_STATUS, PAYMENT_ERRORS } from '../constants/errors';
+import { PAYMENT_ERRORS } from '../constants/errors';
 import { SLOT_DURATION_MINUTES, RESERVATION_EXPIRY_MINUTES } from '../constants/appointments';
 
 export async function getWeekSlots(req: Request, res: Response, next: NextFunction) {
@@ -185,8 +185,8 @@ export async function processPayment(req: Request, res: Response, next: NextFunc
     ]);
 
     res
-      .status(HTTP_STATUS.BAD_REQUEST)
-      .json(error(PAYMENT_ERRORS.PAYMENT_FAILED, HTTP_STATUS.BAD_REQUEST));
+      .status(PAYMENT_ERRORS.PAYMENT_FAILED.status)
+      .json(error(PAYMENT_ERRORS.PAYMENT_FAILED));
   } catch (err) {
     next(err);
   }

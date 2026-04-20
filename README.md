@@ -86,27 +86,25 @@ A full-stack appointment management system designed for physiotherapy clinics. B
 | Technology | Purpose |
 |------------|---------|
 | PostgreSQL | Database |
-| npm Workspaces | Monorepo management |
 
 ## Project Structure
 
 ```
-fisioMox/
-├── backend/
-│   └── src/
-│       ├── controllers/    # Business logic
-│       ├── middleware/     # Auth, validation, rate limiting
-│       ├── routes/         # API endpoints
-│       ├── lib/            # Prisma, Stripe clients
-│       ├── jobs/           # Scheduled tasks (cleanup)
-│       └── tests/          # Test suites
-├── frontend/
-│   └── src/
-│       ├── app/            # Next.js App Router pages
-│       ├── components/     # React components
-│       ├── hooks/          # Custom React hooks
-│       └── contexts/       # Auth context
-└── package.json            # Monorepo configuration
+backend/
+└── src/
+    ├── controllers/    # Business logic
+    ├── middleware/     # Auth, validation, rate limiting
+    ├── routes/         # API endpoints
+    ├── lib/            # Prisma, Stripe clients
+    ├── jobs/           # Scheduled tasks (cleanup)
+    └── tests/          # Test suites
+
+frontend/
+└── src/
+    ├── app/            # Next.js App Router pages
+    ├── components/     # React components
+    ├── hooks/          # Custom React hooks
+    └── contexts/       # Auth context
 ```
 
 ## Getting Started
@@ -120,22 +118,21 @@ fisioMox/
 ### Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/fisiomox.git
+# Clone the repositories
+git clone https://github.com/yourusername/fisiomox-backend.git
+git clone https://github.com/yourusername/fisiomox-frontend.git
 
-# Install dependencies
+# Backend setup
+cd fisiomox-backend
 npm install
+cp .env.example .env
+npx prisma generate
+npx prisma migrate dev
 
-# Setup environment variables
-cp backend/.env.example backend/.env
-cp frontend/.env.example frontend/.env.local
-
-# Setup database
-npm run db:generate
-npm run db:migrate
-
-# Start development servers
-npm run dev
+# Frontend setup
+cd ../fisiomox-frontend
+npm install
+cp .env.example .env.local
 ```
 
 ### Environment Variables
@@ -172,10 +169,24 @@ The API follows REST principles with versioned endpoints under `/api/v1/`.
 
 ## Scripts
 
+### Backend
 ```bash
-npm run dev           # Start both services
+npm run dev           # Development server
 npm run build         # Production build
-npm run test          # Run tests
+npm run test          # Run tests (watch mode)
+npm run test:run      # Run tests once
 npm run lint          # Code linting
-npm run db:migrate    # Database migrations
+npm run lint:fix      # Fix linting issues
+npm run format        # Format code
+npx prisma migrate dev    # Database migrations
+npx prisma generate       # Regenerate Prisma client
+```
+
+### Frontend
+```bash
+npm run dev           # Development server
+npm run build         # Production build
+npm run lint          # Code linting
+npm run lint:fix      # Fix linting issues
+npm run format        # Format code
 ```

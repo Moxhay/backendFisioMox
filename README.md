@@ -119,8 +119,8 @@ frontend/
 
 ```bash
 # Clone the repositories
-git clone https://github.com/yourusername/fisiomox-backend.git
-git clone https://github.com/yourusername/fisiomox-frontend.git
+git clone https://github.com/yourusername/backendFisioMox.git
+git clone https://github.com/yourusername/frontendFisiomox.git
 
 # Backend setup
 cd fisiomox-backend
